@@ -1,0 +1,53 @@
+
+html, body {
+	width: 100%;
+	height: 100%;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-weight: 400;
+
+	background-color: #222;
+}
+
+h1, h2, h3, h4 {
+	font-family: 'Source Sans Pro', sans-serif;
+	font-weight: 600;
+	color:#FFF;
+}
+
+b {
+	font-weight: 600;
+}
+
+.site-header__title {
+	margin:0;
+	text-align: center;
+	font-size: 2.4em;
+}
+
+.site-header__title:nth-of-type(1) {
+	margin-top: 60px;
+}
+
+.site-header__break {
+	display: block;
+	margin:15px auto;
+	padding: 6px 0;
+
+	text-align: center;
+	font-size: 1.2em;
+	font-weight: 600;
+	text-transform: uppercase;
+	color:#FFF;
+}
+
+.site-header__title .cheeky {
+	color:#E71554;
+}
+
+
+.chart {
+	margin-top: 100px;
+	min-height: 200px;
+
+	background-color: rgba(255,255,255,0.06);
+}
