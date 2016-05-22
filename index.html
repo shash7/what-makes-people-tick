@@ -6,11 +6,20 @@
 		<title>
 			A visualization on Online Dating and Weather Metrics or What makes people tick
 		</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
 		<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="css/package.css">
+		<link rel="stylesheet" href="css/plottable.css">
 		<link rel="stylesheet" href="css/main.css">
+
+		<link id="chart-data" rel="variance-data" href="https://dl.dropboxusercontent.com/s/cxu7ndm1bvkiovt/data.json">
+
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+		<script src="js/plottable.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
 		<script src="js/app.js"></script>
 	</head>
 
@@ -34,6 +43,7 @@
 		</div>
 
 		<div class="chart">
+			<svg></svg>
 		</div>
 
 		<div class="section">
@@ -52,6 +62,11 @@
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<div class="chart">
+			<svg>
+			</svg>
 		</div>
 
 	</body>
