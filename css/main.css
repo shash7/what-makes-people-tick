@@ -44,6 +44,46 @@ b {
 	color:#E71554;
 }
 
+.info {
+	padding:10px 0;
+}
+
+.info__list {
+	padding: 4px;
+}
+
+.info__list:after {
+	content:'';
+	display: block;
+	clear: both;
+}
+
+.info__list .list__item {
+	float: left;
+	margin-right: 20px;
+}
+
+.list__item .item__color {
+		display: inline-block;
+		border-radius: 50%;
+		width: 8px;
+		height: 8px;
+
+		vertical-align: middle;
+		background-color: #E71554;
+}
+
+.list__item .item__color.item__color--blue {
+	background-color: #5279C7;
+}
+
+.list__item .item__label {
+	margin-left: 5px;
+
+	font-weight: 600;
+	vertical-align: middle;
+	color:#FFF;
+}
 
 .chart {
 	margin-top: 100px;

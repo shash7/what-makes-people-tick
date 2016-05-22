@@ -46,12 +46,71 @@
 				var date = moment(temp.timestamp);
 				if(!date.isSame(prev, 'd')) {
 					prev = date;
-					console.log(date.format("dddd, MMMM Do YYYY, h:mm:ss a"));
 					return temp;
 				}
 			});
-			var lastDate = moment(weather[0].timestamp);
-			console.log(lastDate.format("dddd, MMMM Do YYYY, h:mm:ss a"));
+			var firstDate = moment(weather[0].timestamp);
+			var lastDate = moment(weather[weather.length - 1].timestamp);
+			posts = posts.map(function(post) {
+				var date = moment(post.data.created_utc * 1000);
+				if(date.isBefore(firstDate) && date.isAfter(lastDate)) {
+					return post;
+				}
+			});
+			var posts = data.posts.sort(function(a, b) {
+				return new Date(b.data.created_utc * 1000) - new Date(a.data.created_utc * 1000);
+			});
+			weather = weather.map(function(temp) {
+				if(temp !== undefined) {
+					return temp;
+				}
+			});
+
+			var res = {
+				temp : [],
+				posts : []
+			};
+			weather.map(function(temp, i) {
+					if(temp) {
+					var weatherDate = moment(temp.timestamp);
+					res.temp.push({
+						x : i,
+						y : temp.cldCvrAvg
+					});
+					var len = 0;
+					posts.map(function(post) {
+						var date = moment(post.data.created_utc * 1000);
+						if(date.isSame(weatherDate, 'd')) {
+							len += 1;
+						}
+					});
+					res.posts.push({
+						x : i,
+						y : len
+					});
+				}
+			});
+			return res;
+		},
+		renderGraph : function(data) {
+			console.log(data);
+			var xScale = new Plottable.Scales.Category();
+			var yScale = new Plottable.Scales.Linear().domain([0, 50]);
+			var colorScale = new Plottable.Scales.InterpolatedColor();
+			colorScale.range(["#BDCEF0", "#5279C7"]);
+
+
+			var plot = new Plottable.Plots.StackedArea()
+			.addDataset(new Plottable.Dataset(data.weather).metadata(5))
+			.addDataset(new Plottable.Dataset(data.posts).metadata(3))
+			.x(function(d) { return d.x; }, xScale)
+			.y(function(d) { return d.y; }, yScale)
+			.attr("fill", function(d, i, dataset) { return dataset.metadata(); }, colorScale)
+			.renderTo(".chart svg");
+
+			window.addEventListener("resize", function() {
+			plot.redraw();
+			});
 		}
 	};
 	
@@ -59,7 +118,8 @@
 		fetchData(function(data) {
 			data = trimData(data);
 			//graph.init(data);
-			graph.setGraph(data);
+			data = graph.setGraph(data);
+			graph.renderGraph(data);
 		});
 	}
 
