@@ -119,8 +119,8 @@
 
 			var line = new Plottable.Plots.Line()
 			  .addDataset(new Plottable.Dataset(data.temp))
-			  //.addDataset(new Plottable.Dataset(data.cloud))
-			  //.addDataset(new Plottable.Dataset(data.humid))
+			  .addDataset(new Plottable.Dataset(data.cloud))
+			  .addDataset(new Plottable.Dataset(data.humid))
 			  .x(function(d) { return d.x; }, xScale)
 			  .y(function(d) { return d.y; }, yScale)
 			  .attr("stroke", "#9BB3E8");
@@ -138,20 +138,37 @@
   			[null, xAxis]
 			]);
 
-			chart.renderTo('.chart svg');
-
-			var interaction = new Plottable.Interactions.Pointer();
-			interaction.onPointerMove(function(point) {
-				var entity = line.entityNearest(point);
-				console.log(entity);
-			});
-			interaction.onPointerExit(function() {
-			});
-			interaction.attachTo(line);
+			chart.renderTo('svg#chart1');
 
 			window.addEventListener("resize", function() {
 			  plot.redraw();
 			});
+
+			// ---------------- //
+
+			var xScale = new Plottable.Scales.Linear();
+			var yScale = new Plottable.Scales.Linear();
+			var plot = new Plottable.Plots.Scatter()
+			  .x(function(d) { return d.x; }, xScale)
+			  .y(function(d) { return d.y; }, yScale)
+			  .addDataset(new Plottable.Dataset(data.posts));
+
+			var plot2 = new Plottable.Plots.Scatter()
+			  .x(function(d) { return d.x; }, xScale)
+			  .y(function(d) { return d.y; }, yScale)
+			  .addDataset(new Plottable.Dataset(data.posts));
+
+			var interaction = new Plottable.Interactions.Pointer();
+			interaction.onPointerMove(function(p) {
+			  plot.entities().forEach(function(entity) {
+			    entity.selection.attr("fill", "#5279C7");
+			  });
+			  var entity = plot.entityNearest(p);
+			  entity.selection.attr("fill", "#E71554");
+			});
+
+			interaction.attachTo(plot);
+			plot.renderTo("svg#chart2");
 		}
 	};
 	
