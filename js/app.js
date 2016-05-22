@@ -67,49 +67,90 @@
 			});
 
 			var res = {
-				temp : [],
-				posts : []
+				temp   : [],
+				cloud  : [],
+				humid  : [],
+				posts  : []
 			};
 			weather.map(function(temp, i) {
 					if(temp) {
 					var weatherDate = moment(temp.timestamp);
 					res.temp.push({
 						x : i,
-						y : temp.cldCvrAvg
+						y : ((temp.tempAvg - 32) * 5) / 9
+					});
+					res.cloud.push({
+						x : i,
+						y : temp.cldCvrAvg * 1.5
+					});
+					res.humid.push({
+						x : i,
+						y : temp.spcHumAvg * 10
 					});
 					var len = 0;
+					var meta = {
+						comments : 0,
+						date     : weatherDate
+					};
 					posts.map(function(post) {
 						var date = moment(post.data.created_utc * 1000);
 						if(date.isSame(weatherDate, 'd')) {
 							len += 1;
+							len += len * 0.5;
 						}
+						meta.comments += post.data.num_comments;
 					});
 					res.posts.push({
 						x : i,
-						y : len
+						y : len,
+						meta : meta
 					});
 				}
 			});
 			return res;
 		},
 		renderGraph : function(data) {
-			console.log(data);
-			var xScale = new Plottable.Scales.Category();
-			var yScale = new Plottable.Scales.Linear().domain([0, 50]);
-			var colorScale = new Plottable.Scales.InterpolatedColor();
-			colorScale.range(["#BDCEF0", "#5279C7"]);
 
+			var xScale = new Plottable.Scales.Linear();
+			var yScale = new Plottable.Scales.Linear();
 
-			var plot = new Plottable.Plots.StackedArea()
-			.addDataset(new Plottable.Dataset(data.weather).metadata(5))
-			.addDataset(new Plottable.Dataset(data.posts).metadata(3))
-			.x(function(d) { return d.x; }, xScale)
-			.y(function(d) { return d.y; }, yScale)
-			.attr("fill", function(d, i, dataset) { return dataset.metadata(); }, colorScale)
-			.renderTo(".chart svg");
+			var xAxis = new Plottable.Axes.Numeric(xScale, "bottom");
+			var yAxis = new Plottable.Axes.Numeric(yScale, "left");
+
+			var line = new Plottable.Plots.Line()
+			  .addDataset(new Plottable.Dataset(data.temp))
+			  //.addDataset(new Plottable.Dataset(data.cloud))
+			  //.addDataset(new Plottable.Dataset(data.humid))
+			  .x(function(d) { return d.x; }, xScale)
+			  .y(function(d) { return d.y; }, yScale)
+			  .attr("stroke", "#9BB3E8");
+
+			var weatherLine = new Plottable.Plots.Line()
+				.addDataset(new Plottable.Dataset(data.posts))
+				.x(function(d) { return d.x; }, xScale)
+			  .y(function(d) { return d.y * 1.5; }, yScale)
+			  .attr("stroke", "#E71554");
+
+			var plots = new Plottable.Components.Group([line, weatherLine]);
+
+			var chart = new Plottable.Components.Table([
+  			[yAxis, plots],
+  			[null, xAxis]
+			]);
+
+			chart.renderTo('.chart svg');
+
+			var interaction = new Plottable.Interactions.Pointer();
+			interaction.onPointerMove(function(point) {
+				var entity = line.entityNearest(point);
+				console.log(entity);
+			});
+			interaction.onPointerExit(function() {
+			});
+			interaction.attachTo(line);
 
 			window.addEventListener("resize", function() {
-			plot.redraw();
+			  plot.redraw();
 			});
 		}
 	};
